@@ -31,12 +31,10 @@ class Login extends React.Component {
   };
   handleSecretaryButtonClick = async () => {
     const { s_id, s_password } = this.state;
-    await API_credential.get("/login", {
-      params: {
-        uid: s_id,
-        password: s_password
-      }
-    }).then(response => {
+    var bodyFormData = new FormData();
+    bodyFormData.set("uid", s_id);
+    bodyFormData.append("password", s_password);
+    await API_credential.post("/login", bodyFormData).then(response => {
       console.log(response);
       if (response.data == "successful") {
         Router.push("/menu");

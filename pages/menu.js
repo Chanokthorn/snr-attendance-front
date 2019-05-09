@@ -60,7 +60,7 @@ class Menu extends React.Component {
   }
 
   async componentDidMount() {
-    await API_credential("/meeting/meetings").then(res => {
+    await API_credential("/meeting").then(res => {
       if (isArray(res.data)) {
         console.log(res.data);
         this.setState({ meetingList: res.data }, () => {
@@ -71,22 +71,34 @@ class Menu extends React.Component {
     });
   }
 
-  onNewMeeting = async () => {
+  // onNewMeeting = async () => {
+  //   const { new_meeting_value, new_meeting_committee } = this.state;
+
+  //   var bodyFormData = new FormData();
+  //   bodyFormData.set("c_id", new_meeting_committee);
+
+  //   await API_credential.put(
+  //     "/meeting/" + new_meeting_value,
+  //     bodyFormData
+  //   ).then(res => {
+  //     console.log(res.data);
+  //     if (res.data == "success") {
+  //       Router.push({
+  //         pathname: "/capture",
+  //         query: { m_id: new_meeting_value }
+  //       });
+  //     }
+  //   });
+  // };
+
+  onNewMeeting = () => {
     const { new_meeting_value, new_meeting_committee } = this.state;
-
-    var bodyFormData = new FormData();
-    bodyFormData.set("c_id", new_meeting_committee);
-
-    await API_credential.put(
-      "/meeting/" + new_meeting_value,
-      bodyFormData
-    ).then(res => {
-      console.log(res.data);
-      if (res.data == "success") {
-        Router.push("/capture");
-      }
+    Router.push({
+      pathname: "/capture",
+      query: { m_id: new_meeting_value }
     });
   };
+
   onNewMeetingClosed = () => {
     this.setState({ new_meeting_modal_open: false });
   };
