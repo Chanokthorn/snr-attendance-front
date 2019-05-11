@@ -8,6 +8,11 @@ const Content = styled.div`
   height: 90vh;
 `;
 
+const HeaderLimit = styled.div`
+  width: 100vw;
+  height: 10vh;
+`;
+
 class Layout extends React.Component {
   constructor(props) {
     super(props);
@@ -15,28 +20,36 @@ class Layout extends React.Component {
       this.state = {
         logged_in: false,
         loaded: true,
+        uid: "",
+        role: "",
         is_login_page: this.props.is_login_page
       };
     } else {
       this.state = {
         logged_in: false,
-        loaded: false
+        loaded: false,
+        uid: "",
+        role: ""
       };
     }
   }
 
   async componentDidMount() {
-    await API_credential.get("/test_login").then(response => {
-      if (response.data == "success") {
-        this.setState({ logged_in: true }, () => {
-          this.setState({ loaded: true });
-        });
+    await API_credential.get("/test_login").then(res => {
+      console.log(res);
+      if (res.data != "unauthorized") {
+        this.setState(
+          { logged_in: true, uid: res.data.uid, role: res.data.role },
+          () => {
+            this.setState({ loaded: true });
+          }
+        );
       }
     });
   }
 
   render() {
-    const { logged_in, loaded, is_login_page } = this.state;
+    const { logged_in, loaded, is_login_page, uid, role } = this.state;
     return (
       <div className="layout">
         {!loaded ? null : !logged_in && !is_login_page ? (
@@ -48,20 +61,10 @@ class Layout extends React.Component {
           </div>
         ) : (
           <div>
-            <div className="header">
-              <Header logged_in={logged_in} />
-            </div>
+            <HeaderLimit className="header">
+              <Header logged_in={logged_in} uid={uid} role={role} />
+            </HeaderLimit>
             <Content>{this.props.children}</Content>
-
-            <style jsx>{`
-              .header {
-                height: 10vw;
-              }
-              .layout {
-                font-family: Verdana, Geneva, sans-serif;
-                height: 100vh;
-              }
-            `}</style>
           </div>
         )}
       </div>

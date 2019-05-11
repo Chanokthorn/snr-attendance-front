@@ -4,6 +4,7 @@ import Router from "next/router";
 import styled from "styled-components";
 
 const HeaderWrapper = styled.div`
+  height: 100%;
   display: flex;
   justify-content: center;
   align-content; center;
@@ -22,6 +23,11 @@ const HeaderLogoutButton = styled.div`
   margin: 3vh;
 `;
 
+const Info = styled.div`
+  align-self: flex-end;
+  margin: 3vh;
+`;
+
 const logout = async () => {
   await API_credential.get("/logout").then(() => {
     Router.push("/index");
@@ -37,6 +43,11 @@ const Header = props => (
       <HeaderLogoutButton className="header-logout-button">
         <Button onClick={logout}>Logout</Button>
       </HeaderLogoutButton>
+    )}
+    {!props.logged_in ? null : (
+      <Info>
+        User ID: {props.uid} Role: {props.role}
+      </Info>
     )}
   </HeaderWrapper>
 );

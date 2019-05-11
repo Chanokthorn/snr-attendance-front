@@ -21,6 +21,7 @@ class CaptureWebcam extends React.Component {
       attendant_ids: props.attendant_ids,
       m_id: props.m_id
     };
+    this.parent_ref = props.parent_ref;
   }
 
   onAcceptAttendance = async () => {
@@ -28,10 +29,19 @@ class CaptureWebcam extends React.Component {
     var bodyFormData = new FormData();
     bodyFormData.set("p_id", personnel_info.p_id);
     console.log("P_ID: ", personnel_info);
-    await API_credential.post("/meeting/" + m_id, bodyFormData).then(res => {
-      console.log(res.data);
-      this.handleClose();
-    });
+    await API_credential.put("/meeting/attend/" + m_id, bodyFormData).then(
+      res => {
+        console.log("RESULT: ", res);
+        if (res.status === 200) {
+          console.log(res.data);
+          this.handleClose();
+          this.props.get_attendant_ids();
+        } else {
+          console.log("cannot add");
+          this.handleClose();
+        }
+      }
+    );
   };
 
   tick = async () => {
@@ -46,7 +56,7 @@ class CaptureWebcam extends React.Component {
       await API_credential.post("/recog/personnel", bodyFormData).then(res => {
         console.log(res.data);
         if (res.data != "NOT_FOUND") {
-          if (!attendant_ids.includes(res.data.id)) {
+          if (!attendant_ids.includes(res.data.p_id)) {
             this.setState(
               {
                 personnel_info: res.data
@@ -95,16 +105,16 @@ class CaptureWebcam extends React.Component {
       facingMode: "user"
     };
     const { personnel_info } = this.state;
-
     return (
       <div>
         <Webcam
           audio={false}
-          height={350}
+          height={"100%"}
           ref={this.setRef}
           screenshotFormat="image/jpeg"
-          width={350}
+          width={"100%"}
           videoConstraints={videoConstraints}
+          className="need-margin"
         />
         <Dialog
           open={this.state.dialog_open}
@@ -113,9 +123,10 @@ class CaptureWebcam extends React.Component {
           onClose={this.handleClose}
           aria-labelledby="alert-dialog-slide-title"
           aria-describedby="alert-dialog-slide-description"
+          className="need-margin"
         >
           <DialogTitle id="alert-dialog-slide-title">
-            {"Use Google's location service?"}
+            {"Identification"}
           </DialogTitle>
           <DialogContent>
             <DialogContentText id="alert-personnel-information">

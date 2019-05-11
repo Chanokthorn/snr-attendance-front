@@ -2,13 +2,11 @@ import Layout from "../layouts/layout";
 import styled from "styled-components";
 import MeetingList from "../components/menu/meetingList";
 import React from "react";
-import { API_credential } from "../utils/API";
+import { API_credential, API } from "../utils/API";
 import { isArray } from "../utils/helper";
 import Router from "next/router";
 
-// import PropTypes from "prop-types";
-// import { withStyles } from "@material-ui/core/styles";
-// import Modal from "@material-ui/core/Modal";
+import MeetingForm from "../components/menu/meetingForm";
 
 const MenuWrapper = styled.div`
   background-color: orange;
@@ -52,55 +50,66 @@ class Menu extends React.Component {
     this.state = {
       loaded: false,
       meetingList: [],
-      new_meeting_value: "",
-      new_meeting_committee: "",
-      new_meeting_modal_open: false,
-      meeting_item_modal_open: false
+      meeting_item_modal_open: false,
+      new_m_modal_open: false
     };
   }
 
   async componentDidMount() {
-    await API_credential("/meeting").then(res => {
-      if (isArray(res.data)) {
-        console.log(res.data);
-        this.setState({ meetingList: res.data }, () => {
-          console.log(this.state);
-          this.setState({ loaded: true });
-        });
-      }
-    });
+    this.getMeeting();
   }
 
-  // onNewMeeting = async () => {
-  //   const { new_meeting_value, new_meeting_committee } = this.state;
-
-  //   var bodyFormData = new FormData();
-  //   bodyFormData.set("c_id", new_meeting_committee);
-
-  //   await API_credential.put(
-  //     "/meeting/" + new_meeting_value,
-  //     bodyFormData
-  //   ).then(res => {
-  //     console.log(res.data);
-  //     if (res.data == "success") {
-  //       Router.push({
-  //         pathname: "/capture",
-  //         query: { m_id: new_meeting_value }
-  //       });
-  //     }
-  //   });
-  // };
-
-  onNewMeeting = () => {
-    const { new_meeting_value, new_meeting_committee } = this.state;
-    Router.push({
-      pathname: "/capture",
-      query: { m_id: new_meeting_value }
+  getMeeting = async () => {
+    const data = (await API_credential.get("/meeting")).data;
+    console.log(data);
+    this.setState({ meetingList: data }, () => {
+      console.log(this.state);
+      this.setState({ loaded: true });
     });
   };
 
+  onNewMeeting = async () => {
+    const { new_m_title, new_m_committee } = this.state;
+
+    var bodyFormData = new FormData();
+    bodyFormData.set("c_id", new_m_committee);
+
+    const data = (await API_credential.put(
+      "/meeting/" + new_m_title,
+      bodyFormData
+    )).data;
+    if (data == "success") {
+      this.getMeeting();
+    }
+
+    // await API_credential.put(
+    //   "/meeting/" + new_m_title,
+    //   bodyFormData
+    // ).then(res => {
+    //   console.log(res.data);
+    //   if (res.data == "success") {
+    //     Router.push({
+    //       pathname: "/capture",
+    //       query: { m_id: new_m_title }
+    //     });
+    //   }
+    // });
+  };
+
+  // onNewMeeting = () => {
+  //   const { new_m_title, new_m_committee } = this.state;
+  //   Router.push({
+  //     pathname: "/capture",
+  //     query: { m_id: new_m_title }
+  //   });
+  // };
+
+  onNewMeetingOpen = () => {
+    this.setState({ new_m_modal_open: true });
+  };
+
   onNewMeetingClosed = () => {
-    this.setState({ new_meeting_modal_open: false });
+    this.setState({ new_m_modal_open: false });
   };
 
   onMeetingSelected = value => {
@@ -108,22 +117,22 @@ class Menu extends React.Component {
   };
 
   handleNewMeetingChange = e => {
-    this.setState({ new_meeting_value: e.target.value });
+    this.setState({ new_m_title: e.target.value });
   };
 
   handleCommitteeChange = e => {
-    this.setState({ new_meeting_committee: e.target.value });
+    this.setState({ new_m_committee: e.target.value });
   };
 
   render() {
-    const { loaded, meetingList, new_meeting_modal_open } = this.state;
+    const { loaded, meetingList, new_m_modal_open } = this.state;
     return (
       <Layout>
         <MenuWrapperContainer className="menu-wrapper-container">
           {!loaded ? null : (
             <MenuWrapper className="menu-wrapper">
               <NewMeeting className="new-meeting">
-                <button onClick={this.onNewMeeting}>doit</button>
+                <button onClick={this.onNewMeetingOpen}>doit</button>
                 meeting
                 <input onChange={this.handleNewMeetingChange} />
                 committee
@@ -139,6 +148,11 @@ class Menu extends React.Component {
               </MeetingListWrapper>
             </MenuWrapper>
           )}
+          <MeetingForm
+            open={new_m_modal_open}
+            handleClose={this.onNewMeetingClosed}
+            getMeeting={this.getMeeting}
+          />
         </MenuWrapperContainer>
       </Layout>
     );

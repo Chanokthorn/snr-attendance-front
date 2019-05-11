@@ -5,7 +5,8 @@ import { API_credential } from "../utils/API";
 import Router from "next/router";
 import { withRouter } from "next/router";
 import CaputreWebcam from "../components/capture/captureWebcam";
-import AttendantList from "../components/capture/attendantList";
+import PersonnelList from "../components/personnelList";
+import { Button } from "semantic-ui-react";
 
 const CaptureContainer = styled.div`
   background-color: green;
@@ -18,9 +19,31 @@ const CaptureContainer = styled.div`
 
 const CaptureHeader = styled.div``;
 
-const CaptureContent = styled.div``;
+const CaptureContent = styled.div`
+  background-color: blue;
+  width: 70%;
+  height: 70%;
+  display: grid;
+  grid-template-columns: 50% 50%;
+  grid-template-areas: "webcam list";
+`;
 
-const AttendantListWrapper = styled.div``;
+const CaptureWebcamWrapper = styled.div`
+  grid-area: webcam;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  .need-margin {
+    padding: 2%;
+  }
+`;
+
+const AttendantListWrapper = styled.div`
+  grid-area: list;
+  width: 100%;
+  height: 100%;
+`;
 
 class Capture extends React.Component {
   constructor(props) {
@@ -31,6 +54,7 @@ class Capture extends React.Component {
       attendant_ids: [],
       attendants: []
     };
+    this.myRef = React.createRef();
   }
 
   componentDidMount() {
@@ -42,7 +66,9 @@ class Capture extends React.Component {
     let { attendant_ids } = this.state;
     await API_credential.get("/meeting/" + m_id)
       .then(res => {
+        console.log("unrpocessed: ", res.data);
         this.setState({ attendants: res.data });
+        console.log;
         res.data.map(attendant => {
           attendant_ids.push(attendant.p_id);
         });
@@ -57,16 +83,27 @@ class Capture extends React.Component {
   };
 
   render() {
-    const { m_id, attendant_ids } = this.state;
+    const { m_id, attendant_ids, attendants } = this.state;
+    console.log("PROPS TO SEND: ", attendants);
     return (
       <Layout>
         <CaptureContainer className="capture-container">
           <CaptureHeader className="capture-header" />
           <CaptureContent className="capture-content">
-            <CaputreWebcam m_id={m_id} attendant_ids={attendant_ids} />
-            <button onClick={this.handleStopClicked}>stop</button>
+            <CaptureWebcamWrapper
+              className="capture-webcam-wrapper"
+              ref={this.myRef}
+            >
+              <CaputreWebcam
+                m_id={m_id}
+                attendant_ids={attendant_ids}
+                get_attendant_ids={this.get_attendant_ids}
+                parent_ref={this.myRef}
+              />
+              <Button onClick={this.handleStopClicked}>stop</Button>
+            </CaptureWebcamWrapper>
             <AttendantListWrapper>
-              <AttendantList />
+              <PersonnelList personnels={attendants} />
             </AttendantListWrapper>
           </CaptureContent>
         </CaptureContainer>
