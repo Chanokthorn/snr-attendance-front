@@ -8,24 +8,33 @@ import Router from "next/router";
 
 import MeetingForm from "../components/menu/meetingForm";
 
-const MenuWrapper = styled.div`
-  background-color: orange;
-  width: 70%;
-  height: 70%;
-  display: grid;
-  grid-template-rows: 1fr 5fr;
-  grid-template-areas:
-    "new-meeting"
-    "meeting-list";
-`;
+import Tabs from "@material-ui/core/Tabs";
+import Tab from "@material-ui/core/Tab";
 
 const MenuWrapperContainer = styled.div`
   background-color: green;
   width: inherit;
   height: inherit;
   display: flex;
+  flex-direction: column
   justify-content: center;
   align-items: center;
+`;
+
+const MenuWrapper = styled.div`
+  background-color: orange;
+  width: 70%;
+  height: 70%;
+  display: grid;
+`;
+
+const IncomingMenuGrid = styled.div`
+  width: inherit;
+  height: inherit;
+  grid-template-rows: 1fr 5fr;
+  grid-template-areas:
+    "new-meeting"
+    "meeting-list";
 `;
 
 const MeetingListWrapper = styled.div`
@@ -42,6 +51,14 @@ const NewMeeting = styled.div`
   background-color: purple;
   grid-area: new-meeting;
   margin: 1vh;
+`;
+
+const TabContainer = styled.div`
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 `;
 
 class Menu extends React.Component {
@@ -129,23 +146,37 @@ class Menu extends React.Component {
     return (
       <Layout>
         <MenuWrapperContainer className="menu-wrapper-container">
+          <Tabs
+            value={this.state.value}
+            onChange={this.handleChange}
+            indicatorColor="primary"
+            textColor="primary"
+            variant="fullWidth"
+          >
+            <Tab label="Incoming" />
+            <Tab label="History" />
+          </Tabs>
           {!loaded ? null : (
             <MenuWrapper className="menu-wrapper">
-              <NewMeeting className="new-meeting">
-                <button onClick={this.onNewMeetingOpen}>doit</button>
-                meeting
-                <input onChange={this.handleNewMeetingChange} />
-                committee
-                <input onChange={this.handleCommitteeChange} />
-              </NewMeeting>
+              <TabContainer>
+                <IncomingMenuGrid className="incoming-menu">
+                  <NewMeeting className="new-meeting">
+                    <button onClick={this.onNewMeetingOpen}>doit</button>
+                    meeting
+                    <input onChange={this.handleNewMeetingChange} />
+                    committee
+                    <input onChange={this.handleCommitteeChange} />
+                  </NewMeeting>
 
-              <MeetingListWrapper>
-                <MeetingList
-                  className="meeting-list"
-                  meetingList={meetingList}
-                  onMeetingSelected={this.onMeetingSelected}
-                />
-              </MeetingListWrapper>
+                  <MeetingListWrapper>
+                    <MeetingList
+                      className="meeting-list"
+                      meetingList={meetingList}
+                      onMeetingSelected={this.onMeetingSelected}
+                    />
+                  </MeetingListWrapper>
+                </IncomingMenuGrid>
+              </TabContainer>
             </MenuWrapper>
           )}
           <MeetingForm
