@@ -11,14 +11,40 @@ import ProfileCard from "./profileCard";
 
 const PersonCard = styled.div`
   background-color: yellow;
-  width: 100%;
+  // width: 100%;
   height: 10%;
   margin: 1vh;
   text-align: center;
-  p {
-    display: inline-block;
-  }
+  display: flex;
+  flex-direction: row;
 `;
+
+const PersonCardContent = styled.div`
+  flex-grow: 1;
+`;
+
+const PersonCardAddImage = styled.div`
+  background-color: white;
+  z-index: 1000;
+`;
+
+const PersonItem = props => {
+  return (
+    <PersonCard {...props}>
+      <PersonCardContent onClick={() => props.handlePersonnelOpen(props.value)}>
+        {props.p_firstname} {props.p_lastname}
+      </PersonCardContent>
+      {props.onAddImage && (
+        <PersonCardAddImage onClick={() => props.onAddImage(props)}>
+          {" "}
+          Add image{" "}
+        </PersonCardAddImage>
+      )}
+    </PersonCard>
+  );
+};
+
+const PersonContainer = styled.div``;
 
 const Persons = styled.div`
   background-color: orange;
@@ -30,16 +56,6 @@ const Persons = styled.div`
   justify-content: flex-start;
   align-item: center;
 `;
-
-const PersonItem = props => {
-  return (
-    <PersonCard onClick={() => props.handlePersonnelOpen(props.value)}>
-      {props.p_firstname} {props.p_lastname}
-    </PersonCard>
-  );
-};
-
-const PersonContainer = styled.div``;
 
 class PersonnelList extends React.Component {
   constructor(props) {
@@ -70,7 +86,7 @@ class PersonnelList extends React.Component {
 
   render() {
     const { personnel_dialog_open, personnel_selected_info } = this.state;
-    const { personnels } = this.props;
+    const { personnels, onAddImage } = this.props;
     console.log("value: ", this.state.value);
     console.log("sel info: ", personnel_selected_info);
     console.log("PERSONNELS: ", personnels);
@@ -82,6 +98,7 @@ class PersonnelList extends React.Component {
             key={"attendant-item" + personnel.p_id}
             handlePersonnelOpen={this.handlePersonnelOpen}
             value={index}
+            {...this.props}
           />
         ))}
         <Dialog
@@ -95,13 +112,14 @@ class PersonnelList extends React.Component {
         >
           <DialogTitle id="alert-dialog-slide-title">{"Personnel"}</DialogTitle>
           <DialogContent>
-            <DialogContentText id="alert-personnel-information">
-              {!personnel_dialog_open ? null : (
-                <PersonContainer>
-                  <ProfileCard {...personnel_selected_info} />
-                </PersonContainer>
-              )}
-            </DialogContentText>
+            {!personnel_dialog_open ? null : (
+              <PersonContainer>
+                <ProfileCard
+                  {...personnel_selected_info}
+                  onAddImage={onAddImage}
+                />
+              </PersonContainer>
+            )}
           </DialogContent>
         </Dialog>
       </Persons>

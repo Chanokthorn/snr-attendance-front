@@ -4,8 +4,7 @@ import React from "react";
 import { API_credential, API } from "../utils/API";
 import { isArray } from "../utils/helper";
 
-import IncomingMenu from "../components/menu/incomingMenu";
-import HistoryMenu from "../components/menu/historyMenu";
+import AdminPersonMenu from "../components/adminMenu/adminPersonMenu";
 
 import Tabs from "@material-ui/core/Tabs";
 import Tab from "@material-ui/core/Tab";
@@ -35,7 +34,7 @@ const TabContainer = styled.div`
   align-items: center;
 `;
 
-class Menu extends React.Component {
+class AdminMenu extends React.Component {
   constructor() {
     super();
     this.state = { tab: 0 };
@@ -48,7 +47,7 @@ class Menu extends React.Component {
   render() {
     const { tab } = this.state;
     return (
-      <Layout page_role="secretary">
+      <Layout page_role="admin">
         <MenuWrapperContainer className="menu-wrapper-container">
           <Tabs
             value={tab}
@@ -57,13 +56,14 @@ class Menu extends React.Component {
             textColor="primary"
             variant="fullWidth"
           >
-            <Tab label="Incoming" />
-            <Tab label="History" />
+            <Tab label="Personnel" />
+            <Tab label="Committee" />
           </Tabs>
           <MenuWrapper className="menu-wrapper">
             <TabContainer>
-              <IncomingMenu show={tab === 0} />
-              <HistoryMenu show={tab === 1} />
+              <AdminPersonMenu show={tab === 0} />
+              {/* <IncomingMenu show={tab === 0} />
+              <HistoryMenu show={tab === 1} /> */}
             </TabContainer>
           </MenuWrapper>
         </MenuWrapperContainer>
@@ -72,12 +72,4 @@ class Menu extends React.Component {
   }
 }
 
-export default Menu;
-
-// Menu.propTypes = {
-//   classes: PropTypes.object.isRequired
-// };
-
-// const MenuWrapped = withStyles(styles)(Menu);
-
-// export default MenuWrapped;
+export default AdminMenu;

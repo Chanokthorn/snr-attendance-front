@@ -46,7 +46,7 @@ const Header = props => (
     )}
     {!props.logged_in ? null : (
       <Info>
-        User ID: {props.uid} Role: {props.role}
+        Username: {props.username} Role: {props.role}
       </Info>
     )}
   </HeaderWrapper>

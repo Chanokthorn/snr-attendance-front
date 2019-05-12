@@ -25,10 +25,9 @@ class Login extends React.Component {
   constructor() {
     super();
     this.state = {
-      mode: "secretary",
-      id: "123",
-      password: "password",
-      tab_selected: 0
+      username: "boneAdmin",
+      password: "senior",
+      tab_selected: 0 // 0: secretary, 1: admin
     };
   }
 
@@ -37,20 +36,25 @@ class Login extends React.Component {
   };
 
   handleUsername = e => {
-    this.setState({ id: e.target.value });
+    this.setState({ username: e.target.value });
   };
   handlePassword = e => {
     this.setState({ password: e.target.value });
   };
-  handleSecretaryButtonClick = async () => {
-    const { id, password } = this.state;
+  handleLoginButtonClick = async () => {
+    const { username, password, tab_selected } = this.state;
     var bodyFormData = new FormData();
-    bodyFormData.set("uid", id);
+    bodyFormData.set("username", username);
     bodyFormData.append("password", password);
+    bodyFormData.append("mode", tab_selected);
     await API_credential.post("/login", bodyFormData).then(response => {
       console.log(response);
       if (response.data == "successful") {
-        Router.push("/menu");
+        if (tab_selected === 0) {
+          Router.push("/menu");
+        } else {
+          Router.push("/adminMenu");
+        }
       }
     });
   };
@@ -84,7 +88,7 @@ class Login extends React.Component {
                 type="password"
                 onChange={this.handlePassword}
               />
-              <Form.Button onClick={this.handleSecretaryButtonClick}>
+              <Form.Button onClick={this.handleLoginButtonClick}>
                 Login
               </Form.Button>
             </Form>

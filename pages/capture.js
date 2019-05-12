@@ -99,7 +99,7 @@ class Capture extends React.Component {
     const { m_id, attendant_ids, attendants } = this.state;
     console.log("PROPS TO SEND: ", attendants);
     return (
-      <Layout>
+      <Layout page_role="secretary">
         <CaptureContainer className="capture-container">
           <CaptureHeader className="capture-header" />
           <CaptureContent className="capture-content">

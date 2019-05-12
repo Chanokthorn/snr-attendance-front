@@ -54,7 +54,6 @@ const styles = theme => ({
 });
 
 const MeetingItem = props => {
-  console.log("MEETING ITEM: ", props);
   const { classes, m_id } = props;
   return (
     <MeetingCard
@@ -71,11 +70,12 @@ const MeetingItem = props => {
             className={classes.iconHover}
             color="action"
             style={{ fontSize: 30 }}
-            onClick={() =>
-              Router.push({
-                pathname: "/capture",
-                query: { m_id: m_id }
-              })
+            onClick={
+              () => Router.push("/capture?m_id=" + m_id, "/capture/" + m_id)
+              // Router.push({
+              //   pathname: "/capture",
+              //   query: { m_id: m_id }
+              // })
             }
           />
         </MeetingCardButton>

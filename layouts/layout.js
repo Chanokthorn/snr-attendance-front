@@ -16,20 +16,22 @@ const HeaderLimit = styled.div`
 class Layout extends React.Component {
   constructor(props) {
     super(props);
-    if (this.props.is_login_page) {
+    if (props.is_login_page) {
       this.state = {
         logged_in: false,
         loaded: true,
-        uid: "",
+        username: "",
         role: "",
-        is_login_page: this.props.is_login_page
+        page_role: props.page_role,
+        is_login_page: props.is_login_page
       };
     } else {
       this.state = {
         logged_in: false,
         loaded: false,
-        uid: "",
-        role: ""
+        username: "",
+        role: "",
+        page_role: props.page_role
       };
     }
   }
@@ -39,7 +41,7 @@ class Layout extends React.Component {
       console.log(res);
       if (res.data != "unauthorized") {
         this.setState(
-          { logged_in: true, uid: res.data.uid, role: res.data.role },
+          { logged_in: true, username: res.data.username, role: res.data.role },
           () => {
             this.setState({ loaded: true });
           }
@@ -49,7 +51,14 @@ class Layout extends React.Component {
   }
 
   render() {
-    const { logged_in, loaded, is_login_page, uid, role } = this.state;
+    const {
+      logged_in,
+      loaded,
+      is_login_page,
+      username,
+      role,
+      page_role
+    } = this.state;
     return (
       <div className="layout">
         {!loaded ? null : !logged_in && !is_login_page ? (
@@ -59,10 +68,12 @@ class Layout extends React.Component {
             </div>
             user is not logged in
           </div>
+        ) : page_role != role && !is_login_page ? (
+          <div>insufficient role</div>
         ) : (
           <div>
             <HeaderLimit className="header">
-              <Header logged_in={logged_in} uid={uid} role={role} />
+              <Header logged_in={logged_in} username={username} role={role} />
             </HeaderLimit>
             <Content>{this.props.children}</Content>
           </div>
