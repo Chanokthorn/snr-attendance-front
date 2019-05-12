@@ -3,6 +3,7 @@ import { API_credential } from "../../utils/API";
 import PersonnelList from "../personnelList";
 
 import AddImageDialog from "./addImageDialog";
+import AddPersonnelForm from "./addPersonnelForm";
 
 const AdminPersonMenuGrid = styled.div`
   width: inherit;
@@ -38,7 +39,8 @@ class AdminPersonMenu extends React.Component {
       meeting_item_modal_open: false,
       new_image_open: false,
       personnel_to_add_image: null,
-      add_image_dialog_open: false
+      add_image_dialog_open: false,
+      add_personnel_dialog_open: false
     };
   }
 
@@ -58,20 +60,42 @@ class AdminPersonMenu extends React.Component {
     });
   };
 
-  onAddImageDialogClose = () => {
+  onAddImageDialogClose = fetch_new => {
     this.setState({ add_image_dialog_open: false });
-    this.getPersonnels();
+    if (fetch_new) {
+      this.getPersonnels();
+    }
+  };
+  /////////////////////////
+  onAddNewPersonnel = () => {
+    this.setState({ add_personnel_dialog_open: true });
   };
 
+  onAddNewPersonnelDialogClose = personnel => {
+    this.setState({ add_personnel_dialog_open: false });
+    if (personnel) {
+      this.getPersonnels();
+      this.setState({
+        add_personnel_dialog_open: false,
+        personnel_to_add_image: personnel,
+        add_image_dialog_open: true
+      });
+    }
+  };
+  /////////////////////////
   render() {
     const {
       personnels,
       add_image_dialog_open,
-      personnel_to_add_image
+      personnel_to_add_image,
+      add_personnel_dialog_open
     } = this.state;
     return (
       <AdminPersonMenuGrid className="incoming-menu">
-        <NewPersonnel className="new-meeting" />
+        <NewPersonnel
+          className="new-meeting"
+          onClick={this.onAddNewPersonnel}
+        />
         <PersonnelListWrapper>
           <PersonnelList
             personnels={personnels}
@@ -83,6 +107,10 @@ class AdminPersonMenu extends React.Component {
           open={add_image_dialog_open}
           personnel={personnel_to_add_image}
           onClose={this.onAddImageDialogClose}
+        />
+        <AddPersonnelForm
+          open={add_personnel_dialog_open}
+          onClose={this.onAddNewPersonnelDialogClose}
         />
         {/* <MeetingForm
           open={new_m_modal_open}

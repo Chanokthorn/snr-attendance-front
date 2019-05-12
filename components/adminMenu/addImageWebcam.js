@@ -41,7 +41,7 @@ class AddImageWebcam extends React.Component {
     const url = "/recog/personnel/" + personnel.p_id;
     const data = (await API_credential.put(url, bodyFormData)).data;
     if (data == "success") {
-      onClose();
+      onClose(true);
     }
   };
 

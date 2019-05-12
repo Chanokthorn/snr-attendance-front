@@ -205,7 +205,7 @@ class MeetingForm extends React.Component {
               Cancel
             </Button>
             <Button onClick={this.createMeeting} color="primary">
-              Subscribe
+              Create
             </Button>
           </DialogActions>
         </Dialog>
