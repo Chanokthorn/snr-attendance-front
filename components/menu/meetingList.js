@@ -7,31 +7,94 @@ import DialogContent from "@material-ui/core/DialogContent";
 import DialogContentText from "@material-ui/core/DialogContentText";
 import DialogTitle from "@material-ui/core/DialogTitle";
 
+import { PlayCircleFilled } from "@material-ui/icons";
+import PropTypes from "prop-types";
+import { withStyles } from "@material-ui/core/styles";
+import yellow from "@material-ui/core/colors/yellow";
+
 import PersonnelList from "../personnelList";
 
 import { API_credential } from "../../utils/API";
+import { sortByStartSchedule } from "../../utils/helper";
+
+import Router from "next/router";
 
 const MeetingCard = styled.div`
   background-color: blue;
-  width: 100%;
-  height: 10%;
+  height: 8vh;
   margin: 1vh;
+  display: flex;
+  flex-direction: row;
+  // display: grid;
+  // grid-template-columns: 5fr 1fr;
+  // grid-template-areas: "info button";
+`;
+const MeetingCardFiller = styled.div`
+  flex-grow: 1;
+`;
+const MeetingCardInfo = styled.div`
+  // grid-area: info;
+`;
+const MeetingCardButton = styled.div`
+  // grid-area: button;
 `;
 
-const MeetingItem = props => (
-  <MeetingCard
-    className="meeting-card"
-    onClick={() => props.onMeetingSelected(props.m_id)}
-  >
-    {props.m_title}
-  </MeetingCard>
-);
+const styles = theme => ({
+  root: {
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "flex-end"
+  },
+  iconHover: {
+    color: yellow[500],
+    "&:hover": {
+      color: yellow[800]
+    }
+  }
+});
+
+const MeetingItem = props => {
+  console.log("MEETING ITEM: ", props);
+  const { classes, m_id } = props;
+  return (
+    <MeetingCard
+      className="meeting-card"
+      onClick={() => props.onMeetingSelected(props.m_id)}
+    >
+      <MeetingCardInfo>
+        {props.m_title} start:{props.m_start_schedule}
+      </MeetingCardInfo>
+      <MeetingCardFiller />
+      {props.active == true && (
+        <MeetingCardButton>
+          <PlayCircleFilled
+            className={classes.iconHover}
+            color="action"
+            style={{ fontSize: 30 }}
+            onClick={() =>
+              Router.push({
+                pathname: "/capture",
+                query: { m_id: m_id }
+              })
+            }
+          />
+        </MeetingCardButton>
+      )}
+    </MeetingCard>
+  );
+};
+
+MeetingItem.propTypes = {
+  classes: PropTypes.object.isRequired
+};
+
+const StyledMeetingItem = withStyles(styles)(MeetingItem);
 
 const MeetingItemContainer = styled.div`
   background-color: green;
   width: inherit;
   height: inherit;
-  margin: 1vh;
+  // margin: 1vh;
   overflow-y: scroll;
 `;
 
@@ -46,10 +109,21 @@ class MeetingList extends React.Component {
     this.state = {
       meetingList: props.meetingList,
       meeting_dialog_open: false,
-      meeting_selected: null,
-      attendants: []
+      attendants: [],
+      sorted: false
     };
   }
+
+  componentDidMount() {
+    this.sortMeetingList();
+  }
+
+  sortMeetingList = async () => {
+    const { meetingList } = this.state;
+    let new_meetingList = meetingList;
+    new_meetingList.sort(sortByStartSchedule);
+    this.setState({ meetingList: new_meetingList, sorted: true });
+  };
 
   onMeetingSelected = async value => {
     try {
@@ -70,17 +144,19 @@ class MeetingList extends React.Component {
   };
 
   render() {
-    const { meetingList } = this.props;
-    const { attendants, meeting_dialog_open, meeting_selected } = this.state;
+    const { meetingList, active } = this.props;
+    const { attendants, meeting_dialog_open, sorted } = this.state;
     return (
       <MeetingItemContainer className="meeting-item-container">
-        {meetingList.map((meeting, index) => (
-          <MeetingItem
-            {...meeting}
-            key={"meeting-item-" + index}
-            onMeetingSelected={this.onMeetingSelected}
-          />
-        ))}
+        {sorted &&
+          meetingList.map((meeting, index) => (
+            <StyledMeetingItem
+              {...meeting}
+              key={"meeting-item-" + index}
+              onMeetingSelected={this.onMeetingSelected}
+              active={active}
+            />
+          ))}
         <Dialog
           open={meeting_dialog_open}
           keepMounted

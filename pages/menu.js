@@ -1,12 +1,11 @@
 import Layout from "../layouts/layout";
 import styled from "styled-components";
-import MeetingList from "../components/menu/meetingList";
 import React from "react";
 import { API_credential, API } from "../utils/API";
 import { isArray } from "../utils/helper";
-import Router from "next/router";
 
-import MeetingForm from "../components/menu/meetingForm";
+import IncomingMenu from "../components/menu/incomingMenu";
+import HistoryMenu from "../components/menu/historyMenu";
 
 import Tabs from "@material-ui/core/Tabs";
 import Tab from "@material-ui/core/Tab";
@@ -28,31 +27,6 @@ const MenuWrapper = styled.div`
   display: grid;
 `;
 
-const IncomingMenuGrid = styled.div`
-  width: inherit;
-  height: inherit;
-  grid-template-rows: 1fr 5fr;
-  grid-template-areas:
-    "new-meeting"
-    "meeting-list";
-`;
-
-const MeetingListWrapper = styled.div`
-  background-color: red;
-  grid-area: meeting-list;
-  width: 100%;
-  height: 100%;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-`;
-
-const NewMeeting = styled.div`
-  background-color: purple;
-  grid-area: new-meeting;
-  margin: 1vh;
-`;
-
 const TabContainer = styled.div`
   width: 100%;
   height: 100%;
@@ -64,91 +38,21 @@ const TabContainer = styled.div`
 class Menu extends React.Component {
   constructor() {
     super();
-    this.state = {
-      loaded: false,
-      meetingList: [],
-      meeting_item_modal_open: false,
-      new_m_modal_open: false
-    };
+    this.state = { tab: 0 };
   }
 
-  async componentDidMount() {
-    this.getMeeting();
-  }
-
-  getMeeting = async () => {
-    const data = (await API_credential.get("/meeting")).data;
-    console.log(data);
-    this.setState({ meetingList: data }, () => {
-      console.log(this.state);
-      this.setState({ loaded: true });
-    });
-  };
-
-  onNewMeeting = async () => {
-    const { new_m_title, new_m_committee } = this.state;
-
-    var bodyFormData = new FormData();
-    bodyFormData.set("c_id", new_m_committee);
-
-    const data = (await API_credential.put(
-      "/meeting/" + new_m_title,
-      bodyFormData
-    )).data;
-    if (data == "success") {
-      this.getMeeting();
-    }
-
-    // await API_credential.put(
-    //   "/meeting/" + new_m_title,
-    //   bodyFormData
-    // ).then(res => {
-    //   console.log(res.data);
-    //   if (res.data == "success") {
-    //     Router.push({
-    //       pathname: "/capture",
-    //       query: { m_id: new_m_title }
-    //     });
-    //   }
-    // });
-  };
-
-  // onNewMeeting = () => {
-  //   const { new_m_title, new_m_committee } = this.state;
-  //   Router.push({
-  //     pathname: "/capture",
-  //     query: { m_id: new_m_title }
-  //   });
-  // };
-
-  onNewMeetingOpen = () => {
-    this.setState({ new_m_modal_open: true });
-  };
-
-  onNewMeetingClosed = () => {
-    this.setState({ new_m_modal_open: false });
-  };
-
-  onMeetingSelected = value => {
-    console.log("selected: ", value);
-  };
-
-  handleNewMeetingChange = e => {
-    this.setState({ new_m_title: e.target.value });
-  };
-
-  handleCommitteeChange = e => {
-    this.setState({ new_m_committee: e.target.value });
+  handleTabChange = (e, value) => {
+    this.setState({ tab: value });
   };
 
   render() {
-    const { loaded, meetingList, new_m_modal_open } = this.state;
+    const { tab } = this.state;
     return (
       <Layout>
         <MenuWrapperContainer className="menu-wrapper-container">
           <Tabs
-            value={this.state.value}
-            onChange={this.handleChange}
+            value={tab}
+            onChange={this.handleTabChange}
             indicatorColor="primary"
             textColor="primary"
             variant="fullWidth"
@@ -156,34 +60,12 @@ class Menu extends React.Component {
             <Tab label="Incoming" />
             <Tab label="History" />
           </Tabs>
-          {!loaded ? null : (
-            <MenuWrapper className="menu-wrapper">
-              <TabContainer>
-                <IncomingMenuGrid className="incoming-menu">
-                  <NewMeeting className="new-meeting">
-                    <button onClick={this.onNewMeetingOpen}>doit</button>
-                    meeting
-                    <input onChange={this.handleNewMeetingChange} />
-                    committee
-                    <input onChange={this.handleCommitteeChange} />
-                  </NewMeeting>
-
-                  <MeetingListWrapper>
-                    <MeetingList
-                      className="meeting-list"
-                      meetingList={meetingList}
-                      onMeetingSelected={this.onMeetingSelected}
-                    />
-                  </MeetingListWrapper>
-                </IncomingMenuGrid>
-              </TabContainer>
-            </MenuWrapper>
-          )}
-          <MeetingForm
-            open={new_m_modal_open}
-            handleClose={this.onNewMeetingClosed}
-            getMeeting={this.getMeeting}
-          />
+          <MenuWrapper className="menu-wrapper">
+            <TabContainer>
+              <IncomingMenu show={tab === 0} />
+              <HistoryMenu show={tab === 1} />
+            </TabContainer>
+          </MenuWrapper>
         </MenuWrapperContainer>
       </Layout>
     );

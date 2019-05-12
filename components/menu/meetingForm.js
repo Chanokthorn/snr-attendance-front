@@ -1,5 +1,6 @@
 import React from "react";
 import { API_credential } from "../../utils/API";
+import { toDatetimeLocal } from "../../utils/helper";
 
 import Button from "@material-ui/core/Button";
 import TextField from "@material-ui/core/TextField";
@@ -43,14 +44,55 @@ const styles = theme => ({
 class MeetingForm extends React.Component {
   constructor(props) {
     super(props);
+    const date = new Date();
+    const date_placeholder = toDatetimeLocal(date);
     this.state = {
       committees: [],
       new_m_title: "",
       new_m_committee: "",
-      new_m_starttime: "",
-      new_m_endtime: ""
+      new_m_start_schedule: date_placeholder,
+      new_m_end_schedule: date_placeholder
     };
   }
+
+  createMeeting = async () => {
+    const {
+      new_m_title,
+      new_m_committee,
+      new_m_start_schedule,
+      new_m_end_schedule
+    } = this.state;
+    const { getMeeting, handleClose } = this.props;
+    var bodyFormData = new FormData();
+    bodyFormData.set("c_id", new_m_committee);
+    bodyFormData.append("m_start_schedule", new_m_start_schedule);
+    bodyFormData.append("m_end_schedule", new_m_end_schedule);
+    const result = (await API_credential.put(
+      "/meeting/" + new_m_title,
+      bodyFormData
+    )).data;
+    if (result == "success") {
+      getMeeting();
+      handleClose();
+    } else {
+      console.log("fail");
+    }
+  };
+
+  // onNewMeeting = async () => {
+  //   const { new_m_title, new_m_committee } = this.state;
+
+  //   var bodyFormData = new FormData();
+  //   bodyFormData.set("c_id", new_m_committee);
+
+  //   const data = (await API_credential.put(
+  //     "/meeting/" + new_m_title,
+  //     bodyFormData
+  //   )).data;
+  //   if (data == "success") {
+  //     this.getMeeting();
+  //   }
+  // };
 
   componentDidMount = async () => {
     const data = (await API_credential.get("/committee")).data;
@@ -62,15 +104,15 @@ class MeetingForm extends React.Component {
   };
 
   handleCommitteeChange = e => {
-    this.setState({ new_m_title: e.target.value });
+    this.setState({ new_m_committee: e.target.value });
   };
 
   handleStartTimeChange = e => {
-    this.setState({ new_m_starttime: e.target.value });
+    this.setState({ new_m_start_schedule: e.target.value });
   };
 
   handleEndTimeChange = e => {
-    this.setState({ new_m_endtime: e.target.value });
+    this.setState({ new_m_end_schedule: e.target.value });
   };
 
   render() {
@@ -78,8 +120,8 @@ class MeetingForm extends React.Component {
       committees,
       new_m_title,
       new_m_committee,
-      new_m_starttime,
-      new_m_endtime
+      new_m_start_schedule,
+      new_m_end_schedule
     } = this.state;
     const { open, handleClose, classes } = this.props;
     return (
@@ -119,10 +161,10 @@ class MeetingForm extends React.Component {
                     <em>None</em>
                   </MenuItem>
                   {committees.map((committee, idx) => {
-                    const { c_id, p_firstname, p_lastname } = committee;
+                    const { c_id, c_title } = committee;
                     return (
-                      <MenuItem value={c_id} key={"committee-" + c_id + idx}>
-                        {p_firstname} {p_lastname}
+                      <MenuItem value={c_id} key={"committee-item-" + c_id}>
+                        {c_title}
                       </MenuItem>
                     );
                   })}
@@ -130,11 +172,11 @@ class MeetingForm extends React.Component {
               </FormControl>
               <FormControl>
                 <TextField
-                  id="starttime"
+                  id="start_schedule"
                   label="Start time"
                   type="datetime-local"
                   // defaultValue="2017-05-24T10:30"
-                  value={new_m_starttime}
+                  value={new_m_start_schedule}
                   className={classes.datePicker}
                   InputLabelProps={{
                     shrink: true
@@ -144,11 +186,11 @@ class MeetingForm extends React.Component {
               </FormControl>
               <FormControl>
                 <TextField
-                  id="endtime"
+                  id="end_schedule"
                   label="End time"
                   type="datetime-local"
                   // defaultValue="2017-05-24T10:30"
-                  value={new_m_endtime}
+                  value={new_m_end_schedule}
                   className={classes.datePicker}
                   InputLabelProps={{
                     shrink: true
@@ -159,10 +201,10 @@ class MeetingForm extends React.Component {
             </form>
           </DialogContent>
           <DialogActions>
-            <Button onClick={this.handleClose} color="primary">
+            <Button onClick={handleClose} color="primary">
               Cancel
             </Button>
-            <Button onClick={this.handleClose} color="primary">
+            <Button onClick={this.createMeeting} color="primary">
               Subscribe
             </Button>
           </DialogActions>

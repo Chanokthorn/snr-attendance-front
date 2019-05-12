@@ -78,8 +78,21 @@ class Capture extends React.Component {
       });
   };
 
-  handleStopClicked = () => {
-    Router.push("/menu");
+  handleBeginClicked = async () => {
+    const { m_id } = this.state;
+    const url = "/meeting/" + m_id + "/starttime";
+    const res = (await API_credential.post(url)).data;
+    console.log(res);
+  };
+
+  handleStopClicked = async () => {
+    const { m_id } = this.state;
+    const url = "/meeting/" + m_id + "/endtime";
+    const res = (await API_credential.post(url)).data;
+    console.log(res);
+    if (res == "success") {
+      Router.push("/menu");
+    }
   };
 
   render() {
@@ -100,6 +113,7 @@ class Capture extends React.Component {
                 get_attendant_ids={this.get_attendant_ids}
                 parent_ref={this.myRef}
               />
+              <Button onClick={this.handleBeginClicked}>Begin</Button>
               <Button onClick={this.handleStopClicked}>stop</Button>
             </CaptureWebcamWrapper>
             <AttendantListWrapper>
