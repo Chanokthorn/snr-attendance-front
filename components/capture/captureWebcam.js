@@ -45,14 +45,14 @@ class CaptureWebcam extends React.Component {
     // console.log("P_ID: ", personnel_info);
     await API_credential.put("/meeting/attend/" + m_id, bodyFormData).then(
       res => {
-        console.log("RESULT: ", res);
+        // console.log("RESULT: ", res);
         if (res.status === 200) {
-          console.log(res.data);
+          // console.log(res.data);
           this.handleAllDialogClose();
           this.props.get_attendant_ids();
           this.getPersonnels();
         } else {
-          console.log("cannot add");
+          // console.log("cannot add");
           this.setState({ dialog_open: false });
         }
       }
@@ -74,7 +74,7 @@ class CaptureWebcam extends React.Component {
       var bodyFormData = new FormData();
       bodyFormData.set("image", image);
       await API_credential.post("/recog/personnel", bodyFormData).then(res => {
-        console.log(res.data);
+        // console.log(res.data);
         if (res.data != "NOT_FOUND") {
           if (!attendant_ids.includes(res.data.p_id)) {
             this.setState(
@@ -160,7 +160,7 @@ class CaptureWebcam extends React.Component {
       personnel_dialog_open,
       selectable_personnels
     } = this.state;
-    console.log("PERSONNEL INFO: ", personnel_info);
+    // console.log("PERSONNEL INFO: ", personnel_info);
     return (
       <div>
         <Webcam

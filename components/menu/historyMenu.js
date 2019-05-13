@@ -28,15 +28,15 @@ class IncomingMenu extends React.Component {
 
   getMeeting = async () => {
     const data = (await API_credential.get("/meeting/history")).data;
-    console.log(data);
+    // console.log(data);
     this.setState({ meetingList: data }, () => {
-      console.log(this.state);
+      // console.log(this.state);
       this.setState({ loaded: true });
     });
   };
 
   onMeetingSelected = value => {
-    console.log("selected: ", value);
+    // console.log("selected: ", value);
   };
 
   render() {

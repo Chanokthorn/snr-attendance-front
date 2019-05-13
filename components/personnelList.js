@@ -56,9 +56,9 @@ const styles = theme => ({
 });
 
 const PersonItemNonStyled = props => {
-  const { classes, value, p_firstname, p_lastname, onAddImage } = props;
+  const { classes, value, p_firstname, p_lastname, onAddImage, p_id } = props;
   return (
-    <Card className={classes.card}>
+    <Card className={classes.card} key={"person-card-" + p_id}>
       <CardContent
         className={classes.content}
         onClick={() => {
@@ -68,6 +68,7 @@ const PersonItemNonStyled = props => {
             props.handlePersonnelOpen(value);
           }
         }}
+        key={"person-card-content1-" + p_id}
       >
         {p_firstname} {p_lastname}
       </CardContent>
@@ -75,8 +76,12 @@ const PersonItemNonStyled = props => {
         <CardContent
           className={classes.iconContainer}
           onClick={() => props.onAddImage(props)}
+          key={"person-card-content2-" + p_id}
         >
-          <AddPhotoAlternate className={classes.icon} />
+          <AddPhotoAlternate
+            className={classes.icon}
+            key={"person-card-add-photo-" + p_id}
+          />
         </CardContent>
       )}
     </Card>
@@ -121,12 +126,12 @@ class PersonnelList extends React.Component {
       personnel_selected_info: null,
       personnels: props.personnels
     };
-    console.log("PROPS PERSONNEL: ", props);
+    // console.log("PROPS PERSONNEL: ", props);
   }
 
   handlePersonnelOpen = value => {
-    console.log("card-item-clicked: ", value);
-    console.log("assigned value: ", this.props.personnels);
+    // console.log("card-item-clicked: ", value);
+    // console.log("assigned value: ", this.props.personnels);
     this.setState({
       personnel_dialog_open: true,
       personnel_selected_info: this.props.personnels[value]
@@ -162,7 +167,7 @@ class PersonnelList extends React.Component {
             <PersonItemWrapper>
               <PersonItem
                 {...personnel}
-                key={"attendant-item" + personnel.p_id}
+                key={"attendant-item" + personnel.p_id + Math.random()}
                 handlePersonnelOpen={this.handlePersonnelOpen}
                 handlePersonSelect={this.handlePersonSelect}
                 onSelectPerson={onSelectPerson}

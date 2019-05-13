@@ -25,8 +25,8 @@ class Login extends React.Component {
   constructor() {
     super();
     this.state = {
-      username: "boneSecretary",
-      password: "password",
+      username: "",
+      password: "",
       tab_selected: 0 // 0: secretary, 1: admin
     };
   }
@@ -48,13 +48,15 @@ class Login extends React.Component {
     bodyFormData.append("password", password);
     bodyFormData.append("mode", tab_selected);
     await API_credential.post("/login", bodyFormData).then(response => {
-      console.log(response);
+      // console.log(response);
       if (response.data == "successful") {
         if (tab_selected === 0) {
           Router.push("/menu");
         } else {
           Router.push("/adminMenu");
         }
+      } else {
+        alert("Invalid username or password.");
       }
     });
   };

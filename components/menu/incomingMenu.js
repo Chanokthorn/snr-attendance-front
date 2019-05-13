@@ -50,11 +50,11 @@ class IncomingMenu extends React.Component {
 
   getMeeting = async () => {
     var data = (await API_credential.get("/meeting/incoming")).data;
-    console.log("before sort: ", data);
+    // console.log("before sort: ", data);
     data.sort(sortByStartSchedule);
-    console.log("after sort: ", data);
+    // console.log("after sort: ", data);
     this.setState({ meetingList: data }, () => {
-      console.log(this.state);
+      // console.log(this.state);
       this.setState({ loaded: true });
     });
   };

@@ -101,9 +101,8 @@ class Capture extends React.Component {
     let { attendant_ids } = this.state;
     await API_credential.get("/meeting/" + m_id)
       .then(res => {
-        console.log("unrpocessed: ", res.data);
+        // console.log("unrpocessed: ", res.data);
         this.setState({ attendants: res.data });
-        console.log;
         res.data.map(attendant => {
           attendant_ids.push(attendant.p_id);
         });
@@ -117,14 +116,14 @@ class Capture extends React.Component {
     const { m_id } = this.state;
     const url = "/meeting/" + m_id + "/start";
     const res = (await API_credential.post(url)).data;
-    console.log(res);
+    // console.log(res);
   };
 
   handleStopClicked = async () => {
     const { m_id } = this.state;
     const url = "/meeting/" + m_id + "/end";
     const res = (await API_credential.post(url)).data;
-    console.log(res);
+    // console.log(res);
     if (res == "success") {
       Router.push("/menu");
     }
@@ -132,7 +131,7 @@ class Capture extends React.Component {
 
   render() {
     const { m_id, attendant_ids, attendants } = this.state;
-    console.log("PROPS TO SEND: ", attendants);
+    // console.log("PROPS TO SEND: ", attendants);
     return (
       <Layout page_role="secretary">
         <CaptureContainer className="capture-container">

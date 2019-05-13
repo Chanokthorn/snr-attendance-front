@@ -38,7 +38,7 @@ class Layout extends React.Component {
 
   async componentDidMount() {
     await API_credential.get("/test_login").then(res => {
-      console.log(res);
+      // console.log(res);
       if (res.data != "unauthorized") {
         this.setState(
           { logged_in: true, username: res.data.username, role: res.data.role },
