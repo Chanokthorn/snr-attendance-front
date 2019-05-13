@@ -29,11 +29,9 @@ const MeetingCard = styled.div`
   // grid-template-columns: 5fr 1fr;
   // grid-template-areas: "info button";
 `;
-const MeetingCardFiller = styled.div`
-  flex-grow: 1;
-`;
 const MeetingCardInfo = styled.div`
   // grid-area: info;
+  flex-grow: 1;
 `;
 const MeetingCardButton = styled.div`
   // grid-area: button;
@@ -56,27 +54,21 @@ const styles = theme => ({
 const MeetingItem = props => {
   const { classes, m_id } = props;
   return (
-    <MeetingCard
-      className="meeting-card"
-      onClick={() => props.onMeetingSelected(props.m_id)}
-    >
-      <MeetingCardInfo>
+    <MeetingCard className="meeting-card">
+      <MeetingCardInfo onClick={() => props.onMeetingSelected(props.m_id)}>
         {props.m_title} start:{props.m_start_schedule}
       </MeetingCardInfo>
-      <MeetingCardFiller />
       {props.active == true && (
         <MeetingCardButton>
           <PlayCircleFilled
             className={classes.iconHover}
             color="action"
             style={{ fontSize: 30 }}
-            onClick={
-              () => Router.push("/capture?m_id=" + m_id, "/capture/" + m_id)
-              // Router.push({
-              //   pathname: "/capture",
-              //   query: { m_id: m_id }
-              // })
-            }
+            onClick={async () => {
+              const url = "/meeting/" + m_id + "/init";
+              const data = (await API_credential.post(url)).data;
+              Router.push("/capture?m_id=" + m_id, "/capture/" + m_id);
+            }}
           />
         </MeetingCardButton>
       )}
@@ -109,21 +101,9 @@ class MeetingList extends React.Component {
     this.state = {
       meetingList: props.meetingList,
       meeting_dialog_open: false,
-      attendants: [],
-      sorted: false
+      attendants: []
     };
   }
-
-  componentDidMount() {
-    this.sortMeetingList();
-  }
-
-  sortMeetingList = async () => {
-    const { meetingList } = this.state;
-    let new_meetingList = meetingList;
-    new_meetingList.sort(sortByStartSchedule);
-    this.setState({ meetingList: new_meetingList, sorted: true });
-  };
 
   onMeetingSelected = async value => {
     try {
@@ -145,18 +125,17 @@ class MeetingList extends React.Component {
 
   render() {
     const { meetingList, active } = this.props;
-    const { attendants, meeting_dialog_open, sorted } = this.state;
+    const { attendants, meeting_dialog_open } = this.state;
     return (
       <MeetingItemContainer className="meeting-item-container">
-        {sorted &&
-          meetingList.map((meeting, index) => (
-            <StyledMeetingItem
-              {...meeting}
-              key={"meeting-item-" + index}
-              onMeetingSelected={this.onMeetingSelected}
-              active={active}
-            />
-          ))}
+        {meetingList.map((meeting, index) => (
+          <StyledMeetingItem
+            {...meeting}
+            key={"meeting-item-" + index}
+            onMeetingSelected={this.onMeetingSelected}
+            active={active}
+          />
+        ))}
         <Dialog
           open={meeting_dialog_open}
           keepMounted
@@ -170,14 +149,12 @@ class MeetingList extends React.Component {
             {"Identification"}
           </DialogTitle>
           <DialogContent>
-            <DialogContentText id="alert-personnel-information">
-              {" "}
-              {!meeting_dialog_open ? null : (
-                <AttendanceContainer>
-                  <PersonnelList personnels={attendants} />
-                </AttendanceContainer>
-              )}
-            </DialogContentText>
+            {" "}
+            {!meeting_dialog_open ? null : (
+              <AttendanceContainer>
+                <PersonnelList personnels={attendants} />
+              </AttendanceContainer>
+            )}
           </DialogContent>
         </Dialog>
       </MeetingItemContainer>

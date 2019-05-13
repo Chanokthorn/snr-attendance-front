@@ -80,14 +80,14 @@ class Capture extends React.Component {
 
   handleBeginClicked = async () => {
     const { m_id } = this.state;
-    const url = "/meeting/" + m_id + "/starttime";
+    const url = "/meeting/" + m_id + "/start";
     const res = (await API_credential.post(url)).data;
     console.log(res);
   };
 
   handleStopClicked = async () => {
     const { m_id } = this.state;
-    const url = "/meeting/" + m_id + "/endtime";
+    const url = "/meeting/" + m_id + "/end";
     const res = (await API_credential.post(url)).data;
     console.log(res);
     if (res == "success") {

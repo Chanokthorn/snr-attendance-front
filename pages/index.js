@@ -25,8 +25,8 @@ class Login extends React.Component {
   constructor() {
     super();
     this.state = {
-      username: "boneAdmin",
-      password: "senior",
+      username: "boneSecretary",
+      password: "password",
       tab_selected: 0 // 0: secretary, 1: admin
     };
   }

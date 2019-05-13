@@ -11,7 +11,6 @@ import Tabs from "@material-ui/core/Tabs";
 import Tab from "@material-ui/core/Tab";
 
 const MenuWrapperContainer = styled.div`
-  background-color: green;
   width: inherit;
   height: inherit;
   display: flex;
@@ -21,7 +20,6 @@ const MenuWrapperContainer = styled.div`
 `;
 
 const MenuWrapper = styled.div`
-  background-color: orange;
   width: 70%;
   height: 70%;
   display: grid;

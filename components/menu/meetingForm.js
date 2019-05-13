@@ -1,6 +1,7 @@
 import React from "react";
 import { API_credential } from "../../utils/API";
 import { toDatetimeLocal } from "../../utils/helper";
+import styled from "styled-components";
 
 import Button from "@material-ui/core/Button";
 import TextField from "@material-ui/core/TextField";
@@ -25,6 +26,7 @@ import Select from "@material-ui/core/Select";
 const styles = theme => ({
   root: {
     display: "flex",
+    flexDirection: "column",
     flexWrap: "wrap"
   },
   formControl: {
@@ -40,6 +42,11 @@ const styles = theme => ({
     width: 200
   }
 });
+
+const MeetingFormWrapper = styled.div`
+  width: 50vw;
+  height: 30vh;
+`;
 
 class MeetingForm extends React.Component {
   constructor(props) {
@@ -79,21 +86,6 @@ class MeetingForm extends React.Component {
     }
   };
 
-  // onNewMeeting = async () => {
-  //   const { new_m_title, new_m_committee } = this.state;
-
-  //   var bodyFormData = new FormData();
-  //   bodyFormData.set("c_id", new_m_committee);
-
-  //   const data = (await API_credential.put(
-  //     "/meeting/" + new_m_title,
-  //     bodyFormData
-  //   )).data;
-  //   if (data == "success") {
-  //     this.getMeeting();
-  //   }
-  // };
-
   componentDidMount = async () => {
     const data = (await API_credential.get("/committee")).data;
     this.setState({ committees: data });
@@ -125,15 +117,15 @@ class MeetingForm extends React.Component {
     } = this.state;
     const { open, handleClose, classes } = this.props;
     return (
-      <div>
-        <Dialog
-          open={open}
-          onClose={handleClose}
-          aria-labelledby="form-dialog-title"
-          maxWidth="lg"
-        >
-          <DialogTitle id="form-dialog-title">Create Meeting</DialogTitle>
-          <DialogContent>
+      <Dialog
+        open={open}
+        onClose={handleClose}
+        aria-labelledby="form-dialog-title"
+        maxWidth="lg"
+      >
+        <DialogTitle id="form-dialog-title">Create Meeting</DialogTitle>
+        <DialogContent>
+          <MeetingFormWrapper>
             <form className={classes.root} autoComplete="off">
               <FormControl className={classes.formControl}>
                 <TextField
@@ -170,46 +162,42 @@ class MeetingForm extends React.Component {
                   })}
                 </Select>
               </FormControl>
-              <FormControl>
-                <TextField
-                  id="start_schedule"
-                  label="Start time"
-                  type="datetime-local"
-                  // defaultValue="2017-05-24T10:30"
-                  value={new_m_start_schedule}
-                  className={classes.datePicker}
-                  InputLabelProps={{
-                    shrink: true
-                  }}
-                  onChange={this.handleStartTimeChange}
-                />
-              </FormControl>
-              <FormControl>
-                <TextField
-                  id="end_schedule"
-                  label="End time"
-                  type="datetime-local"
-                  // defaultValue="2017-05-24T10:30"
-                  value={new_m_end_schedule}
-                  className={classes.datePicker}
-                  InputLabelProps={{
-                    shrink: true
-                  }}
-                  onChange={this.handleEndTimeChange}
-                />
-              </FormControl>
+              <div>
+                <FormControl>
+                  <TextField
+                    id="start_schedule"
+                    label="Start time"
+                    type="datetime-local"
+                    // defaultValue="2017-05-24T10:30"
+                    value={new_m_start_schedule}
+                    className={classes.datePicker}
+                    onChange={this.handleStartTimeChange}
+                  />
+                </FormControl>
+                <FormControl>
+                  <TextField
+                    id="end_schedule"
+                    label="End time"
+                    type="datetime-local"
+                    // defaultValue="2017-05-24T10:30"
+                    value={new_m_end_schedule}
+                    className={classes.datePicker}
+                    onChange={this.handleEndTimeChange}
+                  />
+                </FormControl>
+              </div>
             </form>
-          </DialogContent>
-          <DialogActions>
-            <Button onClick={handleClose} color="primary">
-              Cancel
-            </Button>
-            <Button onClick={this.createMeeting} color="primary">
-              Create
-            </Button>
-          </DialogActions>
-        </Dialog>
-      </div>
+          </MeetingFormWrapper>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleClose} color="primary">
+            Cancel
+          </Button>
+          <Button onClick={this.createMeeting} color="primary">
+            Create
+          </Button>
+        </DialogActions>
+      </Dialog>
     );
   }
 }

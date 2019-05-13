@@ -31,7 +31,15 @@ const PersonCardAddImage = styled.div`
 const PersonItem = props => {
   return (
     <PersonCard {...props}>
-      <PersonCardContent onClick={() => props.handlePersonnelOpen(props.value)}>
+      <PersonCardContent
+        onClick={() => {
+          if (props.onSelectPerson) {
+            props.handlePersonSelect(props.value);
+          } else {
+            props.handlePersonnelOpen(props.value);
+          }
+        }}
+      >
         {props.p_firstname} {props.p_lastname}
       </PersonCardContent>
       {props.onAddImage && (
@@ -84,12 +92,20 @@ class PersonnelList extends React.Component {
     });
   };
 
+  handlePersonSelect = value => {
+    const { personnels, onSelectPerson } = this.props;
+    if (onSelectPerson) {
+      const personnel = personnels[value];
+      onSelectPerson(personnel);
+    }
+  };
+
   render() {
     const { personnel_dialog_open, personnel_selected_info } = this.state;
-    const { personnels, onAddImage } = this.props;
-    console.log("value: ", this.state.value);
-    console.log("sel info: ", personnel_selected_info);
-    console.log("PERSONNELS: ", personnels);
+    const { personnels, onAddImage, onSelectPerson } = this.props;
+    // console.log("value: ", this.state.value);
+    // console.log("sel info: ", personnel_selected_info);
+    // console.log("PERSONNELS: ", personnels);
     return (
       <Persons>
         {personnels.map((personnel, index) => (
@@ -97,31 +113,37 @@ class PersonnelList extends React.Component {
             {...personnel}
             key={"attendant-item" + personnel.p_id}
             handlePersonnelOpen={this.handlePersonnelOpen}
+            handlePersonSelect={this.handlePersonSelect}
+            onSelectPerson={onSelectPerson}
             value={index}
             {...this.props}
           />
         ))}
-        <Dialog
-          open={personnel_dialog_open}
-          keepMounted
-          onClose={this.handlePersonnelClose}
-          aria-labelledby="alert-dialog-slide-title"
-          aria-describedby="alert-dialog-slide-description"
-          className="need-margin"
-          maxWidth="lg"
-        >
-          <DialogTitle id="alert-dialog-slide-title">{"Personnel"}</DialogTitle>
-          <DialogContent>
-            {!personnel_dialog_open ? null : (
-              <PersonContainer>
-                <ProfileCard
-                  {...personnel_selected_info}
-                  onAddImage={onAddImage}
-                />
-              </PersonContainer>
-            )}
-          </DialogContent>
-        </Dialog>
+        {!onSelectPerson ? null : (
+          <Dialog
+            open={personnel_dialog_open}
+            keepMounted
+            onClose={this.handlePersonnelClose}
+            aria-labelledby="alert-dialog-slide-title"
+            aria-describedby="alert-dialog-slide-description"
+            className="need-margin"
+            maxWidth="lg"
+          >
+            <DialogTitle id="alert-dialog-slide-title">
+              {"Personnel"}
+            </DialogTitle>
+            <DialogContent>
+              {!personnel_dialog_open ? null : (
+                <PersonContainer>
+                  <ProfileCard
+                    {...personnel_selected_info}
+                    onAddImage={onAddImage}
+                  />
+                </PersonContainer>
+              )}
+            </DialogContent>
+          </Dialog>
+        )}
       </Persons>
     );
   }

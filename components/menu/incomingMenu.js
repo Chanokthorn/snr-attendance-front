@@ -6,6 +6,8 @@ import Router from "next/router";
 
 import MeetingForm from "./meetingForm";
 
+import { sortByStartSchedule } from "../../utils/helper";
+
 const IncomingMenuGrid = styled.div`
   width: inherit;
   height: inherit;
@@ -47,8 +49,10 @@ class IncomingMenu extends React.Component {
   }
 
   getMeeting = async () => {
-    const data = (await API_credential.get("/meeting/incoming")).data;
-    console.log(data);
+    var data = (await API_credential.get("/meeting/incoming")).data;
+    console.log("before sort: ", data);
+    data.sort(sortByStartSchedule);
+    console.log("after sort: ", data);
     this.setState({ meetingList: data }, () => {
       console.log(this.state);
       this.setState({ loaded: true });
