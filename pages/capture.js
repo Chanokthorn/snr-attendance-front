@@ -9,7 +9,6 @@ import PersonnelList from "../components/personnelList";
 import { Button } from "semantic-ui-react";
 
 const CaptureContainer = styled.div`
-  background-color: green;
   width: inherit;
   height: inherit;
   display: flex;
@@ -20,7 +19,6 @@ const CaptureContainer = styled.div`
 const CaptureHeader = styled.div``;
 
 const CaptureContent = styled.div`
-  background-color: blue;
   width: 70%;
   height: 70%;
   display: grid;
@@ -37,14 +35,51 @@ const CaptureWebcamWrapper = styled.div`
   .need-margin {
     padding: 2%;
   }
+  .webcam-button{
+    width: 100%;
+    margin 2vh;
+  }
 `;
 
 const AttendantListWrapper = styled.div`
   grid-area: list;
   width: 100%;
   height: 100%;
+  display: grid;
+  grid-template-rows: 4vh 1fr;
+  grid-template-areas:
+    "header"
+    "list";
 `;
 
+const PersonnelListHeader = styled.div`
+  background-color: #a0a3a5;
+  grid-area: header;
+  display: flex;
+  flex-direction: row;
+  border-radius: 10px;
+`;
+
+const PersonnelListWrapper = styled.div`
+  grid-area: list;
+`;
+
+const HeaderInfo = styled.div`
+  font-size: 2vh;
+  flex-grow: 1;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  margin: 1vh;
+`;
+const HeaderSubInfo = styled.div`
+  font-size: 2vh;
+  flex-grow: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 1vh;
+`;
 class Capture extends React.Component {
   constructor(props) {
     super(props);
@@ -113,11 +148,27 @@ class Capture extends React.Component {
                 get_attendant_ids={this.get_attendant_ids}
                 parent_ref={this.myRef}
               />
-              <Button onClick={this.handleBeginClicked}>Begin</Button>
-              <Button onClick={this.handleStopClicked}>stop</Button>
+              <Button
+                onClick={this.handleBeginClicked}
+                className="webcam-button"
+              >
+                Begin
+              </Button>
+              <Button
+                onClick={this.handleStopClicked}
+                className="webcam-button"
+              >
+                stop
+              </Button>
             </CaptureWebcamWrapper>
             <AttendantListWrapper>
-              <PersonnelList personnels={attendants} />
+              <PersonnelListHeader>
+                <HeaderInfo>ATTENDANCES</HeaderInfo>
+                <HeaderSubInfo>COUNT: {attendants.length}</HeaderSubInfo>
+              </PersonnelListHeader>
+              <PersonnelListWrapper>
+                <PersonnelList personnels={attendants} />
+              </PersonnelListWrapper>
             </AttendantListWrapper>
           </CaptureContent>
         </CaptureContainer>

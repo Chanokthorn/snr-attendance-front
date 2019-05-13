@@ -3,10 +3,10 @@ import MeetingList from "../menu/meetingList";
 import { API_credential, API } from "../../utils/API";
 
 const MeetingListWrapper = styled.div`
-  background-color: red;
   grid-area: meeting-list;
   width: 100%;
-  height: 100%;
+  height: 70vh;
+  overflow-y: scroll;
   display: flex;
   justify-content: center;
   align-items: center;

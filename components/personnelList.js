@@ -2,65 +2,113 @@ import React from "react";
 import { timingSafeEqual } from "crypto";
 import styled from "styled-components";
 
+import PropTypes from "prop-types";
+import { withStyles } from "@material-ui/core/styles";
 import Dialog from "@material-ui/core/Dialog";
 import DialogContent from "@material-ui/core/DialogContent";
 import DialogContentText from "@material-ui/core/DialogContentText";
 import DialogTitle from "@material-ui/core/DialogTitle";
+import Card from "@material-ui/core/Card";
+import CardContent from "@material-ui/core/CardContent";
 
 import ProfileCard from "./profileCard";
+import { main_theme } from "../theme";
 
-const PersonCard = styled.div`
-  background-color: yellow;
-  // width: 100%;
-  height: 10%;
-  margin: 1vh;
-  text-align: center;
-  display: flex;
-  flex-direction: row;
-`;
+import { AddPhotoAlternate } from "@material-ui/icons";
 
-const PersonCardContent = styled.div`
-  flex-grow: 1;
-`;
+const styles = theme => ({
+  card: {
+    display: "flex",
+    margin: "1vh 0 1vh 0",
+    height: "10vh",
+    flexDirection: "row",
+    flexGrow: 1,
+    backgroundColor: main_theme.item,
+    "&:hover": {
+      backgroundColor: main_theme.itemHovered
+    }
+  },
+  content: {
+    display: "flex",
+    fontSize: "2vh",
+    color: main_theme.buttonFont,
+    alignItems: "center",
+    flexGrow: 1
+  },
+  subContent: {
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center"
+  },
+  iconContainer: {
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center",
+    "&:hover": {
+      backgroundColor: main_theme.buttonActive
+    }
+  },
+  icon: {
+    fontSize: "4vh",
 
-const PersonCardAddImage = styled.div`
-  background-color: white;
-  z-index: 1000;
-`;
+    color: main_theme.buttonFont
+  }
+});
 
-const PersonItem = props => {
+const PersonItemNonStyled = props => {
+  const { classes, value, p_firstname, p_lastname, onAddImage } = props;
   return (
-    <PersonCard {...props}>
-      <PersonCardContent
+    <Card className={classes.card}>
+      <CardContent
+        className={classes.content}
         onClick={() => {
           if (props.onSelectPerson) {
-            props.handlePersonSelect(props.value);
+            props.handlePersonSelect(value);
           } else {
-            props.handlePersonnelOpen(props.value);
+            props.handlePersonnelOpen(value);
           }
         }}
       >
-        {props.p_firstname} {props.p_lastname}
-      </PersonCardContent>
-      {props.onAddImage && (
-        <PersonCardAddImage onClick={() => props.onAddImage(props)}>
-          {" "}
-          Add image{" "}
-        </PersonCardAddImage>
+        {p_firstname} {p_lastname}
+      </CardContent>
+      {onAddImage && (
+        <CardContent
+          className={classes.iconContainer}
+          onClick={() => props.onAddImage(props)}
+        >
+          <AddPhotoAlternate className={classes.icon} />
+        </CardContent>
       )}
-    </PersonCard>
+    </Card>
   );
 };
 
+PersonItemNonStyled.propTypes = {
+  classes: PropTypes.object.isRequired
+};
+
+const PersonItem = withStyles(styles)(PersonItemNonStyled);
+
 const PersonContainer = styled.div``;
 
-const Persons = styled.div`
-  background-color: orange;
+const PersonsWrapper = styled.div`
   width: inherit;
   height: inherit;
+`;
+
+const PersonItemWrapper = styled.div`
+  height: 10vh;
+  margin: 1vh;
+`;
+
+const Persons = styled.div`
+  width: inherit;
+  height: inherit;
+  // display: grid;
+  // grid-auto-flow: row;
   display: flex;
   flex-direction: column;
-  overflow-y: scroll;
+  // overflow-y: scroll;
   justify-content: flex-start;
   align-item: center;
 `;
@@ -106,45 +154,50 @@ class PersonnelList extends React.Component {
     // console.log("value: ", this.state.value);
     // console.log("sel info: ", personnel_selected_info);
     // console.log("PERSONNELS: ", personnels);
+    console.log("OPEN: ", personnel_dialog_open);
     return (
-      <Persons>
-        {personnels.map((personnel, index) => (
-          <PersonItem
-            {...personnel}
-            key={"attendant-item" + personnel.p_id}
-            handlePersonnelOpen={this.handlePersonnelOpen}
-            handlePersonSelect={this.handlePersonSelect}
-            onSelectPerson={onSelectPerson}
-            value={index}
-            {...this.props}
-          />
-        ))}
-        {!onSelectPerson ? null : (
-          <Dialog
-            open={personnel_dialog_open}
-            keepMounted
-            onClose={this.handlePersonnelClose}
-            aria-labelledby="alert-dialog-slide-title"
-            aria-describedby="alert-dialog-slide-description"
-            className="need-margin"
-            maxWidth="lg"
-          >
-            <DialogTitle id="alert-dialog-slide-title">
-              {"Personnel"}
-            </DialogTitle>
-            <DialogContent>
-              {!personnel_dialog_open ? null : (
-                <PersonContainer>
-                  <ProfileCard
-                    {...personnel_selected_info}
-                    onAddImage={onAddImage}
-                  />
-                </PersonContainer>
-              )}
-            </DialogContent>
-          </Dialog>
-        )}
-      </Persons>
+      <PersonsWrapper>
+        <Persons>
+          {personnels.map((personnel, index) => (
+            <PersonItemWrapper>
+              <PersonItem
+                {...personnel}
+                key={"attendant-item" + personnel.p_id}
+                handlePersonnelOpen={this.handlePersonnelOpen}
+                handlePersonSelect={this.handlePersonSelect}
+                onSelectPerson={onSelectPerson}
+                value={index}
+                {...this.props}
+              />
+            </PersonItemWrapper>
+          ))}
+          {onSelectPerson ? null : (
+            <Dialog
+              open={personnel_dialog_open}
+              keepMounted
+              onClose={this.handlePersonnelClose}
+              aria-labelledby="alert-dialog-slide-title"
+              aria-describedby="alert-dialog-slide-description"
+              className="need-margin"
+              maxWidth="lg"
+            >
+              <DialogTitle id="alert-dialog-slide-title">
+                {"Personnel"}
+              </DialogTitle>
+              <DialogContent>
+                {!personnel_dialog_open ? null : (
+                  <PersonContainer>
+                    <ProfileCard
+                      {...personnel_selected_info}
+                      onAddImage={onAddImage}
+                    />
+                  </PersonContainer>
+                )}
+              </DialogContent>
+            </Dialog>
+          )}
+        </Persons>
+      </PersonsWrapper>
     );
   }
 }

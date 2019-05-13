@@ -5,6 +5,7 @@ import { isArray } from "../../utils/helper";
 import Router from "next/router";
 
 import MeetingForm from "./meetingForm";
+import AddNewButton from "../misc/addNewButton";
 
 import { sortByStartSchedule } from "../../utils/helper";
 
@@ -19,19 +20,18 @@ const IncomingMenuGrid = styled.div`
 `;
 
 const MeetingListWrapper = styled.div`
-  background-color: red;
   grid-area: meeting-list;
   width: 100%;
-  height: 100%;
+  height: 60vh;
+  overflow-y: scroll;
   display: flex;
   justify-content: center;
   align-items: center;
 `;
 
 const NewMeeting = styled.div`
-  background-color: purple;
   grid-area: new-meeting;
-  margin: 1vh;
+  display: flex;
 `;
 
 class IncomingMenu extends React.Component {
@@ -122,8 +122,10 @@ class IncomingMenu extends React.Component {
       return (
         <IncomingMenuGrid className="incoming-menu">
           <NewMeeting className="new-meeting">
-            <button onClick={this.onNewMeetingOpen}>doit</button>
+            <AddNewButton onClick={this.onNewMeetingOpen} value="NEW MEETING" />
+            {/* <button onClick={this.onNewMeetingOpen}>doit</button> */}
           </NewMeeting>
+
           <MeetingListWrapper>
             <MeetingList
               className="meeting-list"

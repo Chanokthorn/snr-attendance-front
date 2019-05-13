@@ -4,95 +4,122 @@ import { stringify } from "querystring";
 
 import Dialog from "@material-ui/core/Dialog";
 import DialogContent from "@material-ui/core/DialogContent";
-import DialogContentText from "@material-ui/core/DialogContentText";
 import DialogTitle from "@material-ui/core/DialogTitle";
 
 import { PlayCircleFilled } from "@material-ui/icons";
 import PropTypes from "prop-types";
 import { withStyles } from "@material-ui/core/styles";
-import yellow from "@material-ui/core/colors/yellow";
+import { main_theme } from "../../theme";
+import Card from "@material-ui/core/Card";
+import CardContent from "@material-ui/core/CardContent";
 
 import PersonnelList from "../personnelList";
 
 import { API_credential } from "../../utils/API";
-import { sortByStartSchedule } from "../../utils/helper";
 
 import Router from "next/router";
 
-const MeetingCard = styled.div`
-  background-color: blue;
-  height: 8vh;
-  margin: 1vh;
-  display: flex;
-  flex-direction: row;
-  // display: grid;
-  // grid-template-columns: 5fr 1fr;
-  // grid-template-areas: "info button";
-`;
-const MeetingCardInfo = styled.div`
-  // grid-area: info;
-  flex-grow: 1;
-`;
-const MeetingCardButton = styled.div`
-  // grid-area: button;
-`;
-
 const styles = theme => ({
-  root: {
+  card: {
+    display: "flex",
+    margin: "1vh 0 1vh 0",
+    height: "10vh",
+    flexDirection: "row",
+    flexGrow: 1,
+    backgroundColor: main_theme.item,
+    "&:hover": {
+      backgroundColor: main_theme.itemHovered
+    }
+  },
+  content: {
+    display: "flex",
+    fontSize: "2vh",
+    color: main_theme.buttonFont,
+    alignItems: "center",
+    flexGrow: 1
+  },
+  subContent: {
     display: "flex",
     justifyContent: "center",
-    alignItems: "flex-end"
+    alignItems: "center"
   },
-  iconHover: {
-    color: yellow[500],
+  iconContainer: {
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center",
     "&:hover": {
-      color: yellow[800]
+      backgroundColor: main_theme.buttonActive
     }
+  },
+  icon: {
+    fontSize: "4vh",
+
+    color: main_theme.buttonFont
   }
 });
 
-const MeetingItem = props => {
-  const { classes, m_id } = props;
+const MeetingItemNonStyled = props => {
+  const { classes, m_id, active } = props;
   return (
-    <MeetingCard className="meeting-card">
-      <MeetingCardInfo onClick={() => props.onMeetingSelected(props.m_id)}>
-        {props.m_title} start:{props.m_start_schedule}
-      </MeetingCardInfo>
-      {props.active == true && (
-        <MeetingCardButton>
+    <Card className={classes.card}>
+      <CardContent
+        className={classes.content}
+        onClick={() => props.onMeetingSelected(props.m_id)}
+      >
+        {props.m_title}
+      </CardContent>
+      <CardContent className={classes.subContent}>
+        start:{props.m_start_schedule}
+      </CardContent>
+      {active && (
+        <CardContent className={classes.iconContainer}>
           <PlayCircleFilled
-            className={classes.iconHover}
-            color="action"
-            style={{ fontSize: 30 }}
+            className={classes.icon}
             onClick={async () => {
               const url = "/meeting/" + m_id + "/init";
               const data = (await API_credential.post(url)).data;
               Router.push("/capture?m_id=" + m_id, "/capture/" + m_id);
             }}
           />
-        </MeetingCardButton>
+        </CardContent>
       )}
-    </MeetingCard>
+    </Card>
   );
 };
 
-MeetingItem.propTypes = {
+// MeetingItemNonStyled.propTypes = {
+//   classes: PropTypes.object.isRequired,
+//   theme: PropTypes.object.isRequired
+// };
+
+// const MeetingItem = withStyles(styles, { withTheme: true })(
+//   MeetingItemNonStyled
+// );
+
+MeetingItemNonStyled.propTypes = {
   classes: PropTypes.object.isRequired
 };
 
-const StyledMeetingItem = withStyles(styles)(MeetingItem);
+const MeetingItem = withStyles(styles)(MeetingItemNonStyled);
 
 const MeetingItemContainer = styled.div`
-  background-color: green;
+  // background-color: #a0a3a5;
+  border-radius: 10px;
   width: inherit;
   height: inherit;
-  // margin: 1vh;
-  overflow-y: scroll;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
 `;
 
 const AttendanceContainer = styled.div`
   width: 50vw;
   height: 50vh;
+`;
+
+const ItemWrapper = styled.div`
+  height: 10vh;
+  margin: 1vh;
 `;
 
 class MeetingList extends React.Component {
@@ -129,12 +156,14 @@ class MeetingList extends React.Component {
     return (
       <MeetingItemContainer className="meeting-item-container">
         {meetingList.map((meeting, index) => (
-          <StyledMeetingItem
-            {...meeting}
-            key={"meeting-item-" + index}
-            onMeetingSelected={this.onMeetingSelected}
-            active={active}
-          />
+          <ItemWrapper>
+            <MeetingItem
+              {...meeting}
+              key={"meeting-item-" + index}
+              onMeetingSelected={this.onMeetingSelected}
+              active={active}
+            />
+          </ItemWrapper>
         ))}
         <Dialog
           open={meeting_dialog_open}

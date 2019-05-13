@@ -8,7 +8,6 @@ const ProfileCardLimiter = styled.div``;
 
 const ProfileCard = props => {
   const { p_id, p_firstname, p_lastname, p_title, p_phone, p_email } = props;
-  console.log("FROM PROPS: ", props);
   const juker = "?juker=" + Math.random;
   return (
     <ProfileCardLimiter>

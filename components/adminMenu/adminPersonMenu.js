@@ -1,6 +1,7 @@
 import styled from "styled-components";
 import { API_credential } from "../../utils/API";
 import PersonnelList from "../personnelList";
+import AddNewButton from "../misc/addNewButton";
 
 import AddImageDialog from "./addImageDialog";
 import AddPersonnelForm from "./addPersonnelForm";
@@ -16,19 +17,18 @@ const AdminPersonMenuGrid = styled.div`
 `;
 
 const PersonnelListWrapper = styled.div`
-  background-color: red;
   grid-area: personnel-list;
   width: 100%;
-  height: 100%;
-  display: flex;
-  justify-content: center;
-  align-items: center;
+  height: 60vh;
+  overflow-y: scroll;
+  // display: flex;
+  // justify-content: center;
+  // align-items: center;
 `;
 
 const NewPersonnel = styled.div`
-  background-color: purple;
   grid-area: new-personnel;
-  margin: 1vh;
+  display: flex;
 `;
 
 class AdminPersonMenu extends React.Component {
@@ -92,10 +92,12 @@ class AdminPersonMenu extends React.Component {
     } = this.state;
     return (
       <AdminPersonMenuGrid className="incoming-menu">
-        <NewPersonnel
-          className="new-meeting"
-          onClick={this.onAddNewPersonnel}
-        />
+        <NewPersonnel className="new-meeting">
+          <AddNewButton
+            onClick={this.onAddNewPersonnel}
+            value="NEW PERSONNEL"
+          />
+        </NewPersonnel>
         <PersonnelListWrapper>
           <PersonnelList
             personnels={personnels}
@@ -112,11 +114,6 @@ class AdminPersonMenu extends React.Component {
           open={add_personnel_dialog_open}
           onClose={this.onAddNewPersonnelDialogClose}
         />
-        {/* <MeetingForm
-          open={new_m_modal_open}
-          handleClose={this.onNewMeetingClosed}
-          getMeeting={this.getMeeting}
-        /> */}
       </AdminPersonMenuGrid>
     );
   }
