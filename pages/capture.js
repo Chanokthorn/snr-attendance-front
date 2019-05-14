@@ -87,7 +87,8 @@ class Capture extends React.Component {
       m_id: props.router.query.m_id,
       webcam_active: true,
       attendant_ids: [],
-      attendants: []
+      attendants: [],
+      began: false
     };
     this.myRef = React.createRef();
   }
@@ -116,6 +117,7 @@ class Capture extends React.Component {
     const { m_id } = this.state;
     const url = "/meeting/" + m_id + "/start";
     const res = (await API_credential.post(url)).data;
+    this.setState({ began: true });
     // console.log(res);
   };
 
@@ -130,7 +132,7 @@ class Capture extends React.Component {
   };
 
   render() {
-    const { m_id, attendant_ids, attendants } = this.state;
+    const { m_id, attendant_ids, attendants, began } = this.state;
     // console.log("PROPS TO SEND: ", attendants);
     return (
       <Layout page_role="secretary">
@@ -150,6 +152,7 @@ class Capture extends React.Component {
               <Button
                 onClick={this.handleBeginClicked}
                 className="webcam-button"
+                disabled={began}
               >
                 Begin
               </Button>

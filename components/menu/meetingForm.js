@@ -140,7 +140,7 @@ class MeetingForm extends React.Component {
                 />
               </FormControl>
               <FormControl className={classes.formControl}>
-                <InputLabel htmlFor="age-simple">Title</InputLabel>
+                <InputLabel htmlFor="age-simple">Committee</InputLabel>
                 <Select
                   value={new_m_committee}
                   onChange={this.handleCommitteeChange}

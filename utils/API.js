@@ -1,6 +1,6 @@
 import axios from "axios";
 
-export const baseURL = "http://localhost:8892/";
+export const baseURL = "https://cgci.cp.eng.chula.ac.th/thananop/ssdfaces/";
 
 export const API_credential = axios.create({
   baseURL: baseURL,

@@ -89,6 +89,14 @@ class AddPersonnelForm extends React.Component {
     bodyFormData.append("p_note", p_note);
     const data = (await API_credential.post("/personnel", bodyFormData)).data;
     if (data != "failure") {
+      this.setState({
+        p_title: "",
+        p_firstname: "",
+        p_lastname: "",
+        p_phone: "",
+        p_email: "",
+        p_note: ""
+      });
       onClose(data);
     }
     onClose();
@@ -125,7 +133,7 @@ class AddPersonnelForm extends React.Component {
     return (
       <Dialog
         open={open}
-        onClose={this.handleClose}
+        onClose={onClose}
         aria-labelledby="form-dialog-title"
         maxWidth="lg"
       >

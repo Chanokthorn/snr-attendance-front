@@ -1,6 +1,7 @@
 import styled from "styled-components";
 import MeetingList from "../menu/meetingList";
 import { API_credential, API } from "../../utils/API";
+import { sortByStartSchedule } from "../../utils/helper";
 
 const MeetingListWrapper = styled.div`
   grid-area: meeting-list;
@@ -28,6 +29,7 @@ class IncomingMenu extends React.Component {
 
   getMeeting = async () => {
     const data = (await API_credential.get("/meeting/history")).data;
+    data.sort(sortByStartSchedule);
     // console.log(data);
     this.setState({ meetingList: data }, () => {
       // console.log(this.state);
