@@ -28,6 +28,9 @@ class Login extends React.Component {
       username: "",
       password: "",
       tab_selected: 0 // 0: secretary, 1: admin
+      // username: "boneSecretary",
+      // password: "password",
+      // tab_selected: 0
     };
   }
 

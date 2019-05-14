@@ -1,12 +1,16 @@
 import styled from "styled-components";
 import { API_credential } from "../../utils/API";
 import AddImageWebcam from "./addImageWebcam";
+import AddImageDropFile from "./addImageDropFile";
 import { Button } from "semantic-ui-react";
 
 import Dialog from "@material-ui/core/Dialog";
 import DialogContent from "@material-ui/core/DialogContent";
 import DialogContentText from "@material-ui/core/DialogContentText";
 import DialogTitle from "@material-ui/core/DialogTitle";
+
+import Tabs from "@material-ui/core/Tabs";
+import Tab from "@material-ui/core/Tab";
 
 const AddImageGrid = styled.div`
   width: 50vh;
@@ -30,12 +34,18 @@ class AddImage extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
+      tab: 1
       // open: props.open,
       // onClose: propse
     };
   }
 
+  handleTabChange = (e, value) => {
+    this.setState({ tab: value });
+  };
+
   renderContent = () => {
+    const { tab } = this.state;
     const { personnel, onClose } = this.props;
     return (
       <AddImageGrid>
@@ -43,8 +53,22 @@ class AddImage extends React.Component {
           Add image of {personnel.p_firstname} {personnel.p_lastname}
         </AddImageHeader>
         <AddImageReceiver>
-          {/* <AddImageDropFile /> */}
-          <AddImageWebcam onClose={onClose} personnel={personnel} />
+          <Tabs
+            value={tab}
+            onChange={this.handleTabChange}
+            indicatorColor="primary"
+            textColor="primary"
+            variant="fullWidth"
+          >
+            <Tab label="UPLOAD" />
+            <Tab label="WEBCAM" />
+          </Tabs>
+          {tab === 0 && (
+            <AddImageDropFile onClose={onClose} personnel={personnel} />
+          )}
+          {tab === 1 && (
+            <AddImageWebcam onClose={onClose} personnel={personnel} />
+          )}
         </AddImageReceiver>
       </AddImageGrid>
     );

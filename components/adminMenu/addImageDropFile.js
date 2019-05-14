@@ -1,27 +1,43 @@
 import styled from "styled-components";
 import React from "react";
 import { getBase64 } from "../../utils/helper";
-import FileDrop from "react-file-drop";
-
-const Dropbox = styled.div`
-  background-color: red;
-  width: 100%;
-  height: 100%;
-`;
-const FileDropper = styled(FileDrop)`
-  z-index: 10000;
-`;
+import { API_credential } from "../../utils/API";
 
 class AddImageDropFile extends React.Component {
-  handleDrop = (files, event) => {
-    console.log(files, event);
+  constructor(props) {
+    super(props);
+    this.state = {
+      image64: null,
+      filename: "uploaded"
+    };
+  }
+  onChange = e => {
+    const files = Array.from(e.target.files);
+    const file = files[0];
+    getBase64(file, image64 => {
+      // console.log(image64);
+      this.setState({ image64: image64 });
+    });
   };
-
+  onClick = async () => {
+    const { personnel, onClose } = this.props;
+    const { image64 } = this.state;
+    var bodyFormData = new FormData();
+    bodyFormData.set("image", image64);
+    const url = "/recog/personnel/" + personnel.p_id;
+    const data = (await API_credential.put(url, bodyFormData)).data;
+    if (data == "success") {
+      onClose(true);
+    }
+  };
   render() {
+    const { filename, image64 } = this.state;
     return (
-      <Dropbox>
-        <FileDropper onDrop={this.handleDrop}>drop image file here</FileDropper>
-      </Dropbox>
+      <div>
+        <input type="file" id="single" onChange={this.onChange} />
+        {filename}
+        <button onClick={this.onClick}>GO</button>
+      </div>
     );
   }
 }
